@@ -1,0 +1,20 @@
+[Unit]
+Description=Whatsmydns servers scrapper service
+After=network-online.target
+Wants=network-online.target systemd-networkd-wait-online.service
+StartLimitIntervalSec=5
+StartLimitBurst=5
+
+[Service]
+KillSignal=SIGINT
+WorkingDirectory=/opt/whatsmydns/app
+Type=simple
+User=root
+ExecStart=/usr/local/bin/python3.9 /opt/whatsmydns/app/scrapper.py
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=wmd-scrapper
+
+[Install]
+WantedBy=multi-user.target
