@@ -42,6 +42,7 @@ class Scrapper():
             logger.info("Got total of " + str(len(self.SERVERS)) + " After removing duplications")
             for server in self.SERVERS:
                 self.connector.add_server(server.id, server.latitude,server.longitude,server.provider, server.location, server.country, server.status)
+            logger.info("Total servers in database: " + str(len(scrapper.connector.get_active_servers())))
         except Exception as e:
             logger.error("Error Scrapping: " + str(e))
                 
@@ -57,8 +58,16 @@ def remove_duplicates(servers):
 
 if __name__=="__main__":
     try:
+        logger.info("Running...")
         scrapper = Scrapper()
         scrapper.scrap()
-        logger.info("Total servers in database: " + str(len(scrapper.connector.get_active_servers())))
+        logger.info("Adding to sechedule to run every 12 hours")
+        schedule.every(12).hours.do(scrapper.scrap)
+
+        logger.info("Running...")
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
+
     except Exception as e:
         logger.error("Error scrapping: " + str(e))
