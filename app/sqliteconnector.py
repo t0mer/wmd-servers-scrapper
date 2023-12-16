@@ -101,20 +101,24 @@ class SqliteConnector:
             logger.error(e)
             return None
 
-    def get_active_servers(self):
+    def get_active_servers(self,api_call=False):
         try:
             self.open_connection()
             cursor = self.conn.cursor()
             query = "SELECT * FROM servers where Status = 1"
             cursor.execute(query)
-            rows = cursor.fetchall()
+            if api_call == True:
+                rows = [dict((cursor.description[i][0], value) \
+                for i, value in enumerate(row)) for row in cursor.fetchall()]
+                cursor.close()
+                return (rows[0] if rows else None) if False else rows
+            else:
+                rows = cursor.fetchall()
             return rows
         except Exception as e:
             self.conn.close()
             logger.error(e)
             return None
-
-
 
 
 

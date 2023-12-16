@@ -1,25 +1,34 @@
-class Server():
-    id:str
-    latitude:int
-    longitude:int
-    location:str
-    provider:str
-    country:str
-    status:str
+import uvicorn
+from loguru import logger
+from fastapi.responses import JSONResponse
+from sqliteconnector import SqliteConnector
+from fastapi import FastAPI, Request
 
-    def __init__(self,id,latitude,longitude,location,provider,country,status=1):
-        self.id=id
-        self.latitude=latitude
-        self.longitude = longitude
-        self.location = location
-        self.provider=provider
-        self.country = country
-        self.status = status
+class Server:
+    def __init__(self):
+        self.connector = SqliteConnector()
 
-    def __eq__(self, other):
-        if isinstance(other, Server):
-            return self.id == other.id
-        return False
+        self.tags_metadata = [
+            {
+                "name": "servers",
+                "description": "Get servers list",
+            },
+        ]
 
-    def __hash__(self):
-        return hash(self.id)
+        self.app = FastAPI(title="WhatsMyDNS servers", description="Get list of WhatmyDNS servers", version='1.0.0', openapi_tags=self.tags_metadata, contact={"name": "Tomer Klein", "email": "tomer.klein@gmail.com", "url": "https://github.com/t0mer/wmd-servers-scrapper"})
+
+        @self.app.get("/get/servers",tags=['servers'], summary="Get list of servers")
+        def get_servers(request: Request):
+            try:
+                return JSONResponse(self.connector.get_active_servers(True))
+            except Exception as e:
+                logger.error("Error fetch images, " + str(e))
+                return None
+
+    def start(self):
+        uvicorn.run(self.app, host="0.0.0.0", port=8081)
+
+
+if __name__ == "__main__":
+    server = Server()
+    server.start()
