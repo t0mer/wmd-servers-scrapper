@@ -17,7 +17,7 @@ class Server:
 
         self.app = FastAPI(title="WhatsMyDNS servers", description="Get list of WhatmyDNS servers", version='1.0.0', openapi_tags=self.tags_metadata, contact={"name": "Tomer Klein", "email": "tomer.klein@gmail.com", "url": "https://github.com/t0mer/wmd-servers-scrapper"})
 
-        @self.app.get("/get/servers",tags=['servers'], summary="Get list of servers")
+        @self.app.get("/servers",tags=['servers'], summary="Get list of servers")
         def get_servers(request: Request):
             try:
                 return JSONResponse(self.connector.get_active_servers(True))
