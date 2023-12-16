@@ -1,7 +1,7 @@
 import time
 import schedule
 import requests
-from server import Server
+from servers import Server
 from loguru import logger
 from proxy import ProxyScrapper
 from sqliteconnector import SqliteConnector
