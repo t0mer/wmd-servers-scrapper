@@ -41,7 +41,7 @@ class Scrapper():
             self.SERVERS =  remove_duplicates(self.SERVERS)
             logger.info("Got total of " + str(len(self.SERVERS)) + " After removing duplications")
             for server in self.SERVERS:
-                self.connector.add_server(server.id, server.latitude,server.longitude,server.provider, server.location, server.country, server.status)
+                self.connector.add_server(server.id, server.latitude,server.longitude, server.location, server.provider,server.country, server.status)
             logger.info("Total servers in database: " + str(len(scrapper.connector.get_active_servers())))
         except Exception as e:
             logger.error("Error Scrapping: " + str(e))
